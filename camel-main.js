@@ -2,7 +2,7 @@
 
 d3.select("#main").text("Calculating..");
 
-var thelist;
+
 
 function getFromXML(xml, name)
 {
@@ -13,6 +13,13 @@ function getFromXML(xml, name)
         return "";
     
 }
+
+var thelist;
+var statuses={}
+var dnsrfcentries={};
+var rfclist=[];
+
+
 function tabulate(data, columns) {
     d3.select('#table').html("");
     var table = d3.select('#table').append('table')
@@ -36,20 +43,21 @@ function tabulate(data, columns) {
     var cells = rows.selectAll('td')
 	.data(function (row) {
 	    return columns.map(function (column) {
-		return {column: column, value: row[column]};
+		return {column: column, value: row[column], docID: row["docID"].toLowerCase()};
 	    });
 	})
 	.enter()
 	.append('td')
-	.text(function (d) { return d.value; });
+	.html(function (d) {
+            if(d.column != "title")
+                return d.value;
+            else
+                return '<a href="https://tools.ietf.org/html/'+d.docID+'.txt">'+d.value+'</a>';
+        });
 
     return table;
 }
 
-
-var statuses={}
-var dnsrfcentries={};
-var rfclist=[];
 
 function handleClick(e)
 {
