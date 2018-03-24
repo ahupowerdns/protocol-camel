@@ -14,7 +14,8 @@ function getFromXML(xml, name)
     
 }
 function tabulate(data, columns) {
-    var table = d3.select('body').append('table')
+    d3.select('#table').html("");
+    var table = d3.select('#table').append('table')
     var thead = table.append('thead')
     var	tbody = table.append('tbody');
 
@@ -46,45 +47,80 @@ function tabulate(data, columns) {
 }
 
 
+var statuses={}
+var dnsrfcentries={};
+var rfclist=[];
+
+function handleClick(e)
+{
+    statuses[e.id]=e.checked;
+    updateTable();
+}
+
+function createTable()
+{
+    statuses["OBSOLETED"]=0;
+    var statarr = Object.keys(statuses);
+    console.log(statarr);
+    var table = d3.select('#selector').append('table')
+    var thead = table.append('thead')
+    var	tbody = table.append('tbody');
+    
+    // append the header row
+    thead.append('tr')
+	.selectAll('th')
+	.data(statarr).enter()
+	.append('th')
+	.html(function (column) {
+            if(statuses[column])
+                return '<input type="checkbox" checked id="'+column+'" onclick="handleClick(this);">  <label>'+column+'</label>';
+            else
+                return '<input type="checkbox" id="'+column+'" onclick="handleClick(this);">  <label>'+column+'</label>';
+        });
+
+}
+
+function updateTable()
+{
+    var arr=[]
+    var totalPages=0;
+    for(var e in dnsrfcentries) {
+        var o = dnsrfcentries[e];
+        if(statuses[o.currentStatus] && (!o.obsoleted || statuses["OBSOLETED"])) {
+            arr.push(o);
+            totalPages += o.pages;
+        }
+    }
+    
+    tabulate(arr, ["docID", "title", "pages", "currentStatus", "obsoleted"]);
+    
+    d3.select("#main").text("There are "+rfclist.length+" RFCs, of which "+Object.keys(dnsrfcentries).length + " are relevant to DNS, of which "+arr.length+" are selected by filter. Total pages selected: "+totalPages);
+
+}
+
 d3.xml("ext/rfc-index.xml").then(function(xml) {
-
-    var list= xml.documentElement.getElementsByTagName("rfc-entry");
-    thelist = list;
-    d3.select("#main").text("There are "+list.length+" RFCs");
-
-    console.log(dnsrfcs);
+    rfclist= xml.documentElement.getElementsByTagName("rfc-entry");
 
     var idx={};
     for(var i = 0 ; i < dnsrfcs.length; i++) {
         idx[dnsrfcs[i].toUpperCase()]=1;
     }
 
-    var dnsrfcentries={};
-    for(var i = 0 ; i < list.length; i++) {
-        var o={};
-        o.docID = getFromXML(list[i], "doc-id");
-        if(o.docID in idx) {
-            o.title = getFromXML(list[i], "title");
-            o.currentStatus = getFromXML(list[i],"current-status");
-            o.abstract = getFromXML(list[i], "abstract");
-            o.pages = parseInt(list[i].getElementsByTagName("format")[0].getElementsByTagName("page-count")[0].textContent);
-            o.obsoleted = list[i].getElementsByTagName("obsoleted-by").length;
 
+    for(var i = 0 ; i < rfclist.length; i++) {
+        var o={};
+        o.docID = getFromXML(rfclist[i], "doc-id");
+        if(o.docID in idx) {
+            o.title = getFromXML(rfclist[i], "title");
+            o.currentStatus = getFromXML(rfclist[i],"current-status");
+            o.abstract = getFromXML(rfclist[i], "abstract");
+            o.pages = parseInt(rfclist[i].getElementsByTagName("format")[0].getElementsByTagName("page-count")[0].textContent);
+            o.obsoleted = rfclist[i].getElementsByTagName("obsoleted-by").length;
+            statuses[o.currentStatus]=1;
             dnsrfcentries[o.docID]=o;
         }
     }
 
-    var arr=[]
-    var totalPages=0;
-    for(var e in dnsrfcentries) {
-        var o = dnsrfcentries[e];
-        if((o.currentStatus=="PROPOSED STANDARD" || o.currentStatus == "INTERNET STANDARD") && o.obsoleted==0)  {
-            arr.push(o);
-            totalPages += o.pages;
-        }
-    }
-
-    tabulate(arr, ["docID", "title", "pages", "currentStatus", "obsoleted"]);
-
-    d3.select("#main").text("There are "+list.length+" RFCs, of which "+Object.keys(dnsrfcentries).length + " are relevant to DNS, of which "+arr.length+" are selected by filter. Total pages selected: "+totalPages);
+    createTable();
+    updateTable();
 });
