@@ -128,7 +128,11 @@ d3.xml("ext/rfc-index.xml", {cache: "force-cache"}).then(function(xml) {
             dnsrfcentries[o.docID]=o;
         }
     }
-
+    statuses["INFORMATIONAL"]=0;
+    statuses["HISTORICAL"]=0;
+    statuses["EXPERIMENTAL"]=0;
+    statuses["BEST CURRENT PRACTICE"]=0;
+    statuses["UNKNOWN"]=0;
     createTable();
     updateTable();
 });
