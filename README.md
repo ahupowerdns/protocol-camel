@@ -15,4 +15,6 @@ In various ways:
 
  * https://www.rfc-editor.org/in-notes/rfc-index.xml
  * https://www.isc.org/community/rfcs/dns/
+ * https://tools.ietf.org/wg/dnsop/
+ * https://tools.ietf.org/wg/dprive/
 
