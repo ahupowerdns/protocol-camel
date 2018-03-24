@@ -69,7 +69,7 @@ function createTable()
 {
     statuses["OBSOLETED"]=0;
     var statarr = Object.keys(statuses);
-    console.log(statarr);
+
     var table = d3.select('#selector').append('table')
     var thead = table.append('thead')
     var	tbody = table.append('tbody');
@@ -106,7 +106,7 @@ function updateTable()
 
 }
 
-d3.xml("ext/rfc-index.xml").then(function(xml) {
+d3.xml("ext/rfc-index.xml", {cache: "force-cache"}).then(function(xml) {
     rfclist= xml.documentElement.getElementsByTagName("rfc-entry");
 
     var idx={};
