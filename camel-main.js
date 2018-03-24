@@ -129,7 +129,7 @@ d3.xml("ext/rfc-index.xml", {cache: "force-cache"}).then(function(xml) {
         }
     }
     statuses["INFORMATIONAL"]=0;
-    statuses["HISTORICAL"]=0;
+    statuses["HISTORIC"]=0;
     statuses["EXPERIMENTAL"]=0;
     statuses["BEST CURRENT PRACTICE"]=0;
     statuses["UNKNOWN"]=0;
