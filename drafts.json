@@ -1,0 +1,23 @@
+[
+{"name": "draft-bellis-dnsext-multi-qtypes", "title": "DNS Multiple QTYPEs ", "pages": 6 , "track": "STANDARDS TRACK"},
+{"name": "draft-dupont-dnsop-rfc2845bis", "title": "Secret Key Transaction Authentication for DNS (TSIG) ", "pages": 21 , "track": "STANDARDS TRACK"},
+{"name": "draft-ietf-dnsop-alt-tld", "title": "The ALT Special Use Top Level Domain ", "pages": 10 , "track": "INFORMATIONAL"},
+{"name": "draft-ietf-dnsop-aname", "title": "Address-specific DNS Name Redirection (ANAME) ", "pages": 11 , "track": "STANDARDS TRACK"},
+{"name": "draft-ietf-dnsop-attrleaf", "title": "DNS Scoped Data Through '_Underscore' Naming of Attribute Leaves ", "pages": 8 , "track": "BEST CURRENT PRACTICE"},
+{"name": "draft-ietf-dnsop-dns-capture-format", "title": "C-DNS: A DNS Packet Capture Format ", "pages": 58 , "track": "STANDARDS TRACK"},
+{"name": "draft-ietf-dnsop-dns-tcp-requirements", "title": "DNS Transport over TCP - Operational Requirements ", "pages": 14 , "track": "BEST CURRENT PRACTICE"},
+{"name": "draft-ietf-dnsop-dns-wireformat-http", "title": "An Proxy Use Case of DNS over HTTPS ", "pages": 5 , "track": "EXPERIMENTAL"},
+{"name": "draft-ietf-dnsop-extended-error", "title": "Extended DNS Errors ", "pages": 8 , "track": "STANDARDS TRACK"},
+{"name": "draft-ietf-dnsop-isp-ip6rdns", "title": "Reverse DNS in IPv6 for Internet Service Providers ", "pages": 13 , "track": "INFORMATIONAL"},
+{"name": "draft-ietf-dnsop-kskroll-sentinel", "title": "A Root Key Trust Anchor Sentinel for DNSSEC ", "pages": 14 , "track": "STANDARDS TRACK"},
+{"name": "draft-ietf-dnsop-let-localhost-be-localhost", "title": "Let 'localhost' be localhost. ", "pages": 9 , "track": "STANDARDS TRACK"},
+{"name": "draft-ietf-dnsop-refuse-any", "title": "Providing Minimal-Sized Responses to DNS Queries that have QTYPE=ANY ", "pages": 10 , "track": "STANDARDS TRACK"},
+{"name": "draft-ietf-dnsop-rfc5011-security-considerations", "title": "Security Considerations for RFC5011 Publishers ", "pages": 18 , "track": "STANDARDS TRACK"},
+{"name": "draft-ietf-dnsop-serve-stale", "title": "Serving Stale Data to Improve DNS Resiliency ", "pages": 9 , "track": "STANDARDS TRACK"},
+{"name": "draft-ietf-dnsop-session-signal", "title": "DNS Stateful Operations ", "pages": 49 , "track": "STANDARDS TRACK"},
+{"name": "draft-ietf-dnsop-terminology-bis", "title": "DNS Terminology ", "pages": 42 , "track": "BEST CURRENT PRACTICE"},
+{"name": "draft-muks-dnsop-dns-catalog-zones", "title": "DNS Catalog Zones ", "pages": 14 , "track": "EXPERIMENTAL"},
+{"name": "draft-woodworth-bulk-rr", "title": "BULK DNS Resource Records ", "pages": 14 , "track": "STANDARDS TRACK"},
+{"name": "draft-yao-dnsop-accompanying-questions", "title": "A DNS Query including A Main Question with Accompanying Questions  ", "pages": 10 , "track": "STANDARDS TRACK"},
+{"name": "draft-wkumari-dnsop-multiple-responses", "title": "Returning extra answers in DNS responses. ", "pages": 8 , "track": "STANDARDS TRACK"}
+]

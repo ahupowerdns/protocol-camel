@@ -2,8 +2,6 @@
 
 d3.select("#main").text("Calculating..");
 
-
-
 function getFromXML(xml, name)
 {
     var elements = xml.getElementsByTagName(name);
@@ -14,11 +12,35 @@ function getFromXML(xml, name)
     
 }
 
-var thelist;
-var statuses={}
-var dnsrfcentries={};
-var rfclist=[];
 
+function convertIETFXML2Json()
+{
+    d3.xml("ext/rfc-index.xml", {cache: "force-cache"}).then(function(xml) {
+        var allrfcs={};
+        var rfclist= xml.documentElement.getElementsByTagName("rfc-entry");
+        
+        for(var i = 0 ; i < rfclist.length; i++) {
+            var o={};
+            o.docID = getFromXML(rfclist[i], "doc-id");
+            o.title = getFromXML(rfclist[i], "title");
+            o.currentStatus = getFromXML(rfclist[i],"current-status");
+            //            o.abstract = getFromXML(rfclist[i], "abstract");
+            if(rfclist[i].getElementsByTagName("format").length && rfclist[i].getElementsByTagName("format")[0].getElementsByTagName("page-count").length)
+                o.pages = parseInt(rfclist[i].getElementsByTagName("format")[0].getElementsByTagName("page-count")[0].textContent);
+            else
+                o.pages=0;
+            o.obsoleted = rfclist[i].getElementsByTagName("obsoleted-by").length;
+            o.draft = 0;
+            allrfcs[o.docID]=o;
+        }
+        d3.select("#json").text(JSON.stringify(allrfcs));
+    });
+}
+
+
+var statuses={}
+var allrfcs={};
+var dnsrfcentries={};
 
 function tabulate(data, columns) {
     d3.select('#table').html("");
@@ -43,7 +65,7 @@ function tabulate(data, columns) {
     var cells = rows.selectAll('td')
 	.data(function (row) {
 	    return columns.map(function (column) {
-		return {column: column, value: row[column], docID: row["docID"].toLowerCase()};
+		return {column: column, value: row[column], url: row["url"]};
 	    });
 	})
 	.enter()
@@ -52,7 +74,7 @@ function tabulate(data, columns) {
             if(d.column != "title")
                 return d.value;
             else
-                return '<a href="https://tools.ietf.org/html/'+d.docID+'.txt">'+d.value+'</a>';
+                return '<a href="'+d.url+'">'+d.value+'</a>';
         });
 
     return table;
@@ -68,6 +90,7 @@ function handleClick(e)
 function createTable()
 {
     statuses["OBSOLETED"]=0;
+    statuses["DRAFT"]=0;
     var statarr = Object.keys(statuses);
 
     var table = d3.select('#selector').append('table')
@@ -94,7 +117,7 @@ function updateTable()
     var totalPages=0;
     for(var e in dnsrfcentries) {
         var o = dnsrfcentries[e];
-        if(statuses[o.currentStatus] && (!o.obsoleted || statuses["OBSOLETED"])) {
+        if(statuses[o.currentStatus] && (!o.obsoleted || statuses["OBSOLETED"]) && (!o.draft || statuses["DRAFT"])) {
             arr.push(o);
             totalPages += o.pages;
         }
@@ -102,30 +125,22 @@ function updateTable()
     
     tabulate(arr, ["docID", "title", "pages", "currentStatus", "obsoleted"]);
     
-    d3.select("#main").text("There are "+rfclist.length+" RFCs, of which "+Object.keys(dnsrfcentries).length + " are relevant to DNS, of which "+arr.length+" are selected by filter. Total pages selected: "+totalPages);
-
+    d3.select("#main").text("There are "+Object.keys(allrfcs).length+" RFCs, of which "+Object.keys(dnsrfcentries).length + " are relevant to DNS, of which "+arr.length+" are selected by filter. Total pages selected: "+totalPages);
 }
-
-d3.xml("ext/rfc-index.xml", {cache: "force-cache"}).then(function(xml) {
-    rfclist= xml.documentElement.getElementsByTagName("rfc-entry");
-
+                                                           
+d3.json("all-rfcs.json", {cache: "force-cache"}).then(function(js) {
     var idx={};
     for(var i = 0 ; i < dnsrfcs.length; i++) {
         idx[dnsrfcs[i].toUpperCase()]=1;
     }
-
-
-    for(var i = 0 ; i < rfclist.length; i++) {
-        var o={};
-        o.docID = getFromXML(rfclist[i], "doc-id");
-        if(o.docID in idx) {
-            o.title = getFromXML(rfclist[i], "title");
-            o.currentStatus = getFromXML(rfclist[i],"current-status");
-            o.abstract = getFromXML(rfclist[i], "abstract");
-            o.pages = parseInt(rfclist[i].getElementsByTagName("format")[0].getElementsByTagName("page-count")[0].textContent);
-            o.obsoleted = rfclist[i].getElementsByTagName("obsoleted-by").length;
-            statuses[o.currentStatus]=1;
-            dnsrfcentries[o.docID]=o;
+    allrfcs = js;
+    for(var a in js) {
+        var rfc = js[a];
+            
+        if(rfc.docID in idx) {
+            statuses[rfc.currentStatus]=1;
+            rfc.url = 'https://tools.ietf.org/html/'+rfc.docID.toLowerCase()+'.txt';
+            dnsrfcentries[rfc.docID] = rfc;
         }
     }
     statuses["INFORMATIONAL"]=0;
@@ -133,6 +148,23 @@ d3.xml("ext/rfc-index.xml", {cache: "force-cache"}).then(function(xml) {
     statuses["EXPERIMENTAL"]=0;
     statuses["BEST CURRENT PRACTICE"]=0;
     statuses["UNKNOWN"]=0;
-    createTable();
-    updateTable();
+
+    d3.json("drafts.json").then(function(js) {
+        for(var a in js) {
+            var o ={};
+            o.docID="draft"+a;
+            o.title = js[a].title;
+            o.pages = js[a].pages;
+            o.currentStatus = js[a].track;
+            if(o.currentStatus == "STANDARDS TRACK")
+                o.currentStatus = "PROPOSED STANDARD";
+            o.obsoleted=0;
+            o.draft=1;
+            o.url = 'https://tools.ietf.org/id/'+js[a].name;
+            dnsrfcentries[o.docID]=o;
+        }
+
+        createTable();
+        updateTable();
+    });
 });
