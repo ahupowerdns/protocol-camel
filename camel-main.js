@@ -39,6 +39,7 @@ function convertIETFXML2Json()
 
 
 var statuses={}
+var allsections={};
 var allrfcs={};
 var dnsrfcentries={};
 
@@ -81,11 +82,18 @@ function tabulate(data, columns) {
 }
 
 
-function handleClick(e)
+function handleStatusClick(e)
 {
     statuses[e.id]=e.checked;
     updateTable();
 }
+
+function handleSectionClick(e)
+{
+    allsections[e.id]=e.checked;
+    updateTable();
+}
+
 
 function createTable()
 {
@@ -97,16 +105,27 @@ function createTable()
     var thead = table.append('thead')
     var	tbody = table.append('tbody');
     
-    // append the header row
-    thead.append('tr')
-	.selectAll('th')
+    tbody.append('tr')
+	.selectAll('td')
 	.data(statarr).enter()
-	.append('th')
+	.append('td')
 	.html(function (column) {
             if(statuses[column])
-                return '<input type="checkbox" checked id="'+column+'" onclick="handleClick(this);">  <label>'+column+'</label>';
+                return '<input type="checkbox" checked id="'+column+'" onclick="handleStatusClick(this);">  <label>'+column+'</label>';
             else
-                return '<input type="checkbox" id="'+column+'" onclick="handleClick(this);">  <label>'+column+'</label>';
+                return '<input type="checkbox" id="'+column+'" onclick="handleStatusClick(this);">  <label>'+column+'</label>';
+        });
+
+    var sectarr = Object.keys(allsections);
+    tbody.append('tr')
+	.selectAll('td')
+	.data(sectarr).enter()
+	.append('td')
+	.html(function (column) {
+            if(allsections[column])
+                return '<input type="checkbox" checked id="'+column+'" onclick="handleSectionClick(this);">  <label>'+column+'</label>';
+            else
+                return '<input type="checkbox" id="'+column+'" onclick="handleSectionClick(this);">  <label>'+column+'</label>';
         });
 
 }
@@ -118,28 +137,43 @@ function updateTable()
     for(var e in dnsrfcentries) {
         var o = dnsrfcentries[e];
         if(statuses[o.currentStatus] && (!o.obsoleted || statuses["OBSOLETED"]) && (!o.draft || statuses["DRAFT"])) {
-            arr.push(o);
-            totalPages += o.pages;
+            var doit=false;
+            for(var l in o.sectionsArray) {
+                if(allsections[o.sectionsArray[l] ]) {
+                    doit = true;
+                    break;
+                }
+            }
+            if(doit) {
+                arr.push(o);
+                totalPages += o.pages;
+            }
         }
     }
     
-    tabulate(arr, ["docID", "title", "pages", "currentStatus", "obsoleted"]);
+    tabulate(arr, ["docID", "title", "pages", "currentStatus", "obsoleted", "sections"]);
     
     d3.select("#main").text("There are "+Object.keys(allrfcs).length+" RFCs, of which "+Object.keys(dnsrfcentries).length + " are relevant to DNS, of which "+arr.length+" are selected by filter. Total pages selected: "+totalPages);
 }
                                                            
 d3.json("all-rfcs.json", {cache: "force-cache"}).then(function(js) {
-    var idx={};
-    for(var i = 0 ; i < dnsrfcs.length; i++) {
-        idx[dnsrfcs[i].toUpperCase()]=1;
-    }
     allrfcs = js;
     for(var a in js) {
         var rfc = js[a];
-            
-        if(rfc.docID in idx) {
+
+        // there must be a way, way better way to do this loop
+        if(rfc.docID.toLowerCase() in dnsrfcs) {
             statuses[rfc.currentStatus]=1;
             rfc.url = 'https://tools.ietf.org/html/'+rfc.docID.toLowerCase()+'.txt';
+            rfc.sections="";
+
+            if("sections" in dnsrfcs[rfc.docID.toLowerCase()]) {
+                rfc.sectionsArray = dnsrfcs[rfc.docID.toLowerCase()].sections;
+                for(var b in dnsrfcs[rfc.docID.toLowerCase()].sections) {
+                    rfc.sections+= dnsrfcs[rfc.docID.toLowerCase()].sections[b]+" ";
+                    allsections[dnsrfcs[rfc.docID.toLowerCase()].sections[b]] = 1;
+                }
+            }
             dnsrfcentries[rfc.docID] = rfc;
         }
     }
