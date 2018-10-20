@@ -111,9 +111,9 @@ function createTable()
 	.append('td')
 	.html(function (column) {
             if(statuses[column])
-                return '<input type="checkbox" checked id="'+column+'" onclick="handleStatusClick(this);">  <label>'+column+'</label>';
+                return '<input type="checkbox" checked id="'+column+'" onclick="handleStatusClick(this);">  <label for="'+column+'">'+column+'</label>';
             else
-                return '<input type="checkbox" id="'+column+'" onclick="handleStatusClick(this);">  <label>'+column+'</label>';
+                return '<input type="checkbox" id="'+column+'" onclick="handleStatusClick(this);">  <label for="'+column+'">'+column+'</label>';
         });
 
     var sectarr = Object.keys(allsections);
@@ -123,9 +123,9 @@ function createTable()
 	.append('td')
 	.html(function (column) {
             if(allsections[column])
-                return '<input type="checkbox" checked id="'+column+'" onclick="handleSectionClick(this);">  <label>'+column+'</label>';
+                return '<input type="checkbox" checked id="'+column+'" onclick="handleSectionClick(this);">  <label for="'+column+'">'+column+'</label>';
             else
-                return '<input type="checkbox" id="'+column+'" onclick="handleSectionClick(this);">  <label>'+column+'</label>';
+                return '<input type="checkbox" id="'+column+'" onclick="handleSectionClick(this);">  <label for="'+column+'">'+column+'</label>';
         });
 
 }
