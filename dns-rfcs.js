@@ -245,5 +245,10 @@ var dnsrfcs={
 "rfc8222": {"sections": ["dns-use"]},
 "rfc8244": {"sections": ["core"]},
 "rfc8310": {"sections": ["core"]},
-"rfc8324": {"sections": ["dns-meta"]}
+"rfc8324": {"sections": ["dns-meta"]},
+"rfc8375": {"sections": ["dns-use"]},
+"rfc8427": {"sections": ["dns-meta"]},
+"rfc8467": {"sections": ["core"]},
+"rfc8483": {"sections": ["dns-meta"]},
+"rfc8484": {"sections": ["core"]}
 };
