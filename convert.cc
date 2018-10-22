@@ -83,8 +83,8 @@ int main(int argc, char** argv)
         continue;
       }
       else {
-        if(dnsrfcs[re.name].count("dns-use"))
-          continue;
+        //        if(dnsrfcs[re.name].count("dns-use"))
+        //  continue;
       }
 
       re.title = v.second.get_child("title").data();
