@@ -124,7 +124,7 @@ var dnsrfcs={};
 var drafts={};
 
 function phaseTwo() {
-d3.json("all-rfcs.json", {cache: "force-cache"}).then(function(js) {
+d3.json("all-dns-rfcs.json", {cache: "force-cache"}).then(function(js) {
     allrfcs = js;
     for(var a in js) {
         var rfc = js[a];
