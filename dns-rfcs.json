@@ -1,5 +1,4 @@
-// note - all RFCs must be lowercase & 4 digits right now
-var dnsrfcs={
+{
 "rfc0882": {"sections": ["core"]},
 "rfc0883": {"sections": ["core"]},
 "rfc0920": {"sections": ["core"]},
@@ -267,4 +266,4 @@ var dnsrfcs={
 "rfc8467": {"sections": ["core"]},
 "rfc8483": {"sections": ["dns-meta"]},
 "rfc8484": {"sections": ["core"]}
-};
+}

@@ -14,6 +14,8 @@ using namespace ::boost::multi_index;
 #include <fstream>
 #include <unordered_set>
 #include <map>
+#include "nlohmann/json.hpp"
+
 namespace pt = boost::property_tree;
 
 using namespace std;
@@ -51,14 +53,17 @@ index_t g_index;
 
 int main(int argc, char** argv)
 {
-  ifstream dnsrfcstxt("dns-rfcs.txt");
-  std::unordered_set<string> dnsrfcs;
-  std::string line;
-  while(getline(dnsrfcstxt, line)) {
-    boost::trim(line);
-    boost::to_upper(line);
-    dnsrfcs.insert(line);
+  ifstream dnsrfcsfile("dns-rfcs.json");
+  nlohmann::json dnsrfcsJS;
+  dnsrfcsfile >> dnsrfcsJS;
+
+  std::unordered_map<string, unordered_set<string>> dnsrfcs;
+  for(auto iter = dnsrfcsJS.begin() ; iter != dnsrfcsJS.end(); ++iter) {
+    cout << iter.key() << endl;
+    for(const auto& s : iter.value()["sections"])
+      dnsrfcs[boost::to_upper_copy(iter.key())].insert(s.get<string>());
   }
+  cout<<"Have "<<dnsrfcs.size()<<" RFCs whitllisted for DNS"<<endl;
   
   // Create empty property tree object
   pt::ptree tree;
@@ -74,9 +79,12 @@ int main(int argc, char** argv)
       RFCEntry re;
       re.name = v.second.get_child("doc-id").data();
 
-      if(!dnsrfcs.count(re.name))
+      if(!dnsrfcs.count(re.name)) {
+        //        cout << "Ignoring "<<re.name<<", not a DNS rfc"<<endl;
         continue;
-      
+      }
+      if(!dnsrfcs[re.name].count("core"))
+        continue;
       re.title = v.second.get_child("title").data();
       re.currentStatus=v.second.get_child("current-status").data();
 
@@ -139,12 +147,15 @@ int main(int argc, char** argv)
   plot << "\n";
 
   set<string> dedup;
+  // this is in time order
   for(const auto& re : g_index) {
     plot << re.creation;
     statusPageCount[re.currentStatus] += re.pages;
-
+    cout << re.name << " ["<<re.currentStatus<<"] appears, "<< re.title<<endl;
     auto& idx = g_index.get<NameTag>();
     for(const auto& obsoletes : re.obsoletes) {
+      cout << "\tIt obsoletes "<<obsoletes<<endl;
+
       if(auto iter = idx.find(obsoletes); iter != idx.end()) {
         if(!dedup.count(iter->name)) {
           statusPageCount[iter->currentStatus] -= iter->pages;
@@ -156,7 +167,7 @@ int main(int argc, char** argv)
         }
       }
       else {
-        cerr<<"Could not find the thing it obsoletes: "<< obsoletes << endl;
+        cerr<< re.name<<": could not find the thing it obsoletes: "<< obsoletes << endl;
       }
     }
     
