@@ -2,42 +2,6 @@
 
 d3.select("#main").text("Calculating..");
 
-function getFromXML(xml, name)
-{
-    var elements = xml.getElementsByTagName(name);
-    if(elements.length)
-        return elements[0].textContent;
-    else
-        return "";
-    
-}
-
-
-function convertIETFXML2Json()
-{
-    d3.xml("ext/rfc-index.xml", {cache: "force-cache"}).then(function(xml) {
-        var allrfcs={};
-        var rfclist= xml.documentElement.getElementsByTagName("rfc-entry");
-        
-        for(var i = 0 ; i < rfclist.length; i++) {
-            var o={};
-            o.docID = getFromXML(rfclist[i], "doc-id");
-            o.title = getFromXML(rfclist[i], "title");
-            o.currentStatus = getFromXML(rfclist[i],"current-status");
-            //            o.abstract = getFromXML(rfclist[i], "abstract");
-            if(rfclist[i].getElementsByTagName("format").length && rfclist[i].getElementsByTagName("format")[0].getElementsByTagName("page-count").length)
-                o.pages = parseInt(rfclist[i].getElementsByTagName("format")[0].getElementsByTagName("page-count")[0].textContent);
-            else
-                o.pages=0;
-            o.obsoleted = rfclist[i].getElementsByTagName("obsoleted-by").length;
-            o.draft = 0;
-            allrfcs[o.docID]=o;
-        }
-        d3.select("#json").text(JSON.stringify(allrfcs));
-    });
-}
-
-
 var statuses={}
 var allsections={};
 var allrfcs={};
@@ -153,10 +117,14 @@ function updateTable()
     
     tabulate(arr, ["docID", "title", "pages", "currentStatus", "obsoleted", "sections"]);
     
-    d3.select("#main").text("There are "+Object.keys(allrfcs).length+" RFCs, of which "+Object.keys(dnsrfcentries).length + " are relevant to DNS, of which "+arr.length+" are selected by filter. Total pages selected: "+totalPages);
+    d3.select("#main").text("There are "+Object.keys(dnsrfcentries).length + " RFCs relevant to DNS, of which "+arr.length+" are selected by filter. Total pages selected: "+totalPages);
 }
-                                                           
-d3.json("all-rfcs.json", {cache: "force-cache"}).then(function(js) {
+
+var dnsrfcs={};
+var drafts={};
+
+function phaseTwo() {
+d3.json("all-dns-rfcs.json", {cache: "force-cache"}).then(function(js) {
     allrfcs = js;
     for(var a in js) {
         var rfc = js[a];
@@ -184,6 +152,7 @@ d3.json("all-rfcs.json", {cache: "force-cache"}).then(function(js) {
     statuses["UNKNOWN"]=0;
 
     d3.json("drafts.json").then(function(js) {
+        drafts=js;
         for(var a in js) {
             var o ={};
             o.docID="draft"+a;
@@ -203,4 +172,12 @@ d3.json("all-rfcs.json", {cache: "force-cache"}).then(function(js) {
         createTable();
         updateTable();
     });
+});
+
+
+}
+
+d3.json("dns-rfc-annotations.json", {cache: "force-cache"}).then(function(js) {
+    dnsrfcs = js;
+    phaseTwo();
 });
