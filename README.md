@@ -7,9 +7,8 @@ Page is live on https://powerdns.org/dns-camel/
 ## How you can help
 In various ways:
 
- * The source file [dns-rfcs.js] is known to not list all DNS relevant RFCs
- * The output is pretty ugly, CSS help is welcome!
- * There is no infrastructure yet to track drafts
+ * The source file [dns-rfcs.json] is known to not list all DNS relevant RFCs
+ * Check if your favorite RFCs are listed in the right categories
 
 ## Sources
 
