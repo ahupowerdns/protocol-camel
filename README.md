@@ -7,7 +7,7 @@ Page is live on https://powerdns.org/dns-camel/
 ## How you can help
 In various ways:
 
- * The source file [dns-rfcs.json] is known to not list all DNS relevant RFCs
+ * The source file [dns-rfcs-annotations.json] is known to not list all DNS relevant RFCs
  * Check if your favorite RFCs are listed in the right categories
 
 ## Sources
