@@ -265,5 +265,12 @@
 "rfc8463": {"sections": ["dns-use"]},
 "rfc8467": {"sections": ["core"]},
 "rfc8483": {"sections": ["dns-meta"]},
-"rfc8484": {"sections": ["core"]}
+"rfc8484": {"sections": ["core"]},
+"rfc8567": {"sections": ["rrtype"]},
+"rfc8553": {"sections": ["dns-use"]},
+"rfc8552": {"sections": ["dns-use"]},
+"rfc8509": {"sections": ["dns-use"]},
+"rfc8501": {"sections": ["dns-use"]},
+"rfc8499": {"sections": ["dns-meta"]},
+"rfc8490": {"sections": ["core"]}
 }

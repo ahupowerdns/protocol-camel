@@ -17,3 +17,13 @@ In various ways:
  * https://tools.ietf.org/wg/dnsop/
  * https://tools.ietf.org/wg/dprive/
 
+## Updating the graphs
+Get a fresh copy of rfc-index.xml, and update [dns-rfc-annotations.json]
+with any fresh DNS wisdom you find in there.
+
+Then compile and run "./convert" (requires a modern C++ compiler).
+
+Then run "python3 camelplot.py", which will require you to have installed
+matplotlib, pandas. Some guidance is on
+[https://ds9a.nl/articles/posts/from-gnuplot-to-matplotlib-pandas/]
+

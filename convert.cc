@@ -144,10 +144,15 @@ int main(int argc, char** argv)
     cout << re.name << endl;
   }
   ofstream plot("plot");
+  ofstream csv("camel.csv");
+  csv<<"TIME";
   plot << "# TIME";
-  for(const auto& spc : statusPageCount)
+  for(const auto& spc : statusPageCount) {
     plot << '\t' << spc.first;
+    csv << '\t'<< boost::replace_all_copy(spc.first, " ", "_");
+  }
   plot << "\n";
+  csv << "\n";
 
   set<string> dedup;
 
@@ -155,6 +160,7 @@ int main(int argc, char** argv)
   // this is in time order
   for(const auto& re : g_index) {
     plot << re.creation;
+    csv << re.creation;
     statusPageCount[re.currentStatus] += re.pages;
     cout << re.name << " ["<<re.currentStatus<<"] appears, "<< re.title<<endl;
 
@@ -177,8 +183,10 @@ int main(int argc, char** argv)
       }
     }
     
-    for(const auto& spc : statusPageCount)
+    for(const auto& spc : statusPageCount) {
       plot << '\t' << spc.second;
+      csv << '\t' << spc.second;
+    }
 
     plot <<" # "<< re.name;
     for(const auto& obsoletes : re.obsoletes) {
@@ -186,6 +194,7 @@ int main(int argc, char** argv)
     }
     
     plot << "\n";
+    csv << "\n";
   }
 
   for(const auto& re : g_index) {
