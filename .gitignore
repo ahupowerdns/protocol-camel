@@ -1,1 +1,13 @@
 *~
+
+convert
+convert.d
+convert.o
+
+data/*_camel-plot-clean.png
+data/*_camel-plot.png
+data/*_camel.csv
+data/*_plot
+data/all-*-rfcs.json
+data/*-drafts.json
+data/*-rfc-annotations.json

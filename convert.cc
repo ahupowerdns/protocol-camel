@@ -53,7 +53,13 @@ index_t g_index;
 
 int main(int argc, char** argv)
 {
-  ifstream dnsrfcsfile("dns-rfc-annotations.json");
+  string specific;
+  specific = "dns";	// this code defaults to dns; but could be used for oher areas
+  if (argc > 1) {
+      specific = argv[1];
+  }
+
+  ifstream dnsrfcsfile(specific + "-rfc-annotations.json");
   nlohmann::json dnsrfcsJS;
   dnsrfcsfile >> dnsrfcsJS;
 
@@ -62,13 +68,13 @@ int main(int argc, char** argv)
     for(const auto& s : iter.value()["sections"])
       dnsrfcs[boost::to_upper_copy(iter.key())].insert(s.get<string>());
   }
-  cout<<"Have "<<dnsrfcs.size()<<" RFCs whitllisted for DNS"<<endl;
+  cout<<"Have "<<dnsrfcs.size()<<" RFCs whitllisted for " + specific<<endl;
   
   // Create empty property tree object
   pt::ptree tree;
   
   // Parse the XML into the property tree.
-  pt::read_xml("rfc-index.xml", tree);
+  pt::read_xml("ext/rfc-index.xml", tree);
   
   auto idx=tree.get_child("rfc-index");
   int count=0;
@@ -79,7 +85,7 @@ int main(int argc, char** argv)
       re.name = v.second.get_child("doc-id").data();
 
       if(!dnsrfcs.count(re.name)) {
-        //        cout << "Ignoring "<<re.name<<", not a DNS rfc"<<endl;
+        //        cout << "Ignoring "<<re.name<<", not a " + specific + " rfc"<<endl;
         continue;
       }
       else {
@@ -98,7 +104,7 @@ int main(int argc, char** argv)
         for(const auto obs : v.second.get_child("obsoleted-by")) {
           re.obsoletedBy.insert(obs.second.data());
           if(!dnsrfcs.count(obs.second.data())) {
-            cerr<<re.name<<" " <<re.title<<" is obsoleted by "<< obs.second.data()<< " which itself is not a DNS RFC!" <<endl;
+            cerr<<re.name<<" " <<re.title<<" is obsoleted by "<< obs.second.data()<< " which itself is not a " + specific + " RFC!" <<endl;
           }
         }
       }
@@ -106,7 +112,7 @@ int main(int argc, char** argv)
         for(const auto obs : v.second.get_child("obsoletes")) {
           re.obsoletes.insert(obs.second.data());
           if(!dnsrfcs.count(obs.second.data())) {
-            cerr<<re.name<<" " <<re.title<<" obsoletes "<< obs.second.data()<< " which itself is not a DNS RFC!" <<endl;
+            cerr<<re.name<<" " <<re.title<<" obsoletes "<< obs.second.data()<< " which itself is not a " + specific + " RFC!" <<endl;
           }
         }
       }
@@ -114,7 +120,7 @@ int main(int argc, char** argv)
       if(v.second.count("updated-by")) {
         for(const auto obs : v.second.get_child("updated-by")) {
           if(!dnsrfcs.count(obs.second.data())) {
-            cerr<<re.name<<" " <<re.title<<" is updated by "<< obs.second.data()<< " which itself is not a DNS RFC!" <<endl;
+            cerr<<re.name<<" " <<re.title<<" is updated by "<< obs.second.data()<< " which itself is not a " + specific + " RFC!" <<endl;
           }
         }
       }
@@ -136,15 +142,15 @@ int main(int argc, char** argv)
       g_index.insert(re);
     }
   }
-  cout<<"Have "<<g_index.size()<<" DNS RFCs"<<endl;
+  cout<<"Have "<<g_index.size()<<" " + specific + " RFCs"<<endl;
   std::map<string, int> statusPageCount;
   statusPageCount["OBSOLETED"];
   for(const auto& re : g_index) {
     statusPageCount[re.currentStatus];
     cout << re.name << endl;
   }
-  ofstream plot("plot");
-  ofstream csv("camel.csv");
+  ofstream plot("data/" + specific + "_plot");
+  ofstream csv("data/" + specific + "_camel.csv");
   csv<<"TIME";
   plot << "# TIME";
   for(const auto& spc : statusPageCount) {
@@ -215,8 +221,11 @@ int main(int argc, char** argv)
     allRFCs[re.name]=rfc;
   }
 
-  ofstream newJSON("all-dns-rfcs.json");
+  ofstream newJSON("data/all-" + specific + "-rfcs.json");
   
   newJSON << std::setw(4) << allRFCs << endl;
+
+  ofstream myfile("data/project.js");
+  myfile << "var specific = \"" + specific + "\";\n";
 
 }
