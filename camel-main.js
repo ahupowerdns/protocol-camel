@@ -149,7 +149,6 @@ d3.json("data/all-" + specific + "-rfcs.json", {cache: "force-cache"}).then(func
         }
     }
     statuses["INFORMATIONAL"]=0;
-    statuses["HISTORIC"]=0;
     statuses["EXPERIMENTAL"]=0;
     statuses["BEST CURRENT PRACTICE"]=0;
     statuses["UNKNOWN"]=0;

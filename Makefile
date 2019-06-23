@@ -1,4 +1,4 @@
-CXXFLAGS:=-std=gnu++17 -Wall -O2 -MMD -MP -ggdb  -Iext -I${HOME}/src/boost/boost_1_70_0
+CXXFLAGS:=-std=gnu++17 -Wall -O2 -MMD -MP -ggdb  -Iext # -I${HOME}/src/boost/boost_1_70_0
 
 PROGRAMS = convert
 
