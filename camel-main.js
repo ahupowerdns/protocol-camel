@@ -1,11 +1,14 @@
 'use strict';
 
+document.title = specific.toUpperCase() + " Camel";
+d3.select('#welcome').text(specific.toUpperCase());
+
 d3.select("#main").text("Calculating..");
 
 var statuses={}
 var allsections={};
 var allrfcs={};
-var dnsrfcentries={};
+var specificrfcentries={};
 
 function tabulate(data, columns) {
     d3.select('#table').html("");
@@ -98,8 +101,8 @@ function updateTable()
 {
     var arr=[]
     var totalPages=0;
-    for(var e in dnsrfcentries) {
-        var o = dnsrfcentries[e];
+    for(var e in specificrfcentries) {
+        var o = specificrfcentries[e];
         if(statuses[o.currentStatus] && (!o.obsoleted || statuses["OBSOLETED"]) && (!o.draft || statuses["DRAFT"])) {
             var doit=false;
             for(var l in o.sectionsArray) {
@@ -117,32 +120,32 @@ function updateTable()
     
     tabulate(arr, ["docID", "title", "pages", "currentStatus", "obsoleted", "sections"]);
     
-    d3.select("#main").text("There are "+Object.keys(dnsrfcentries).length + " RFCs relevant to DNS, of which "+arr.length+" are selected by filter. Total pages selected: "+totalPages);
+    d3.select("#main").text("There are "+Object.keys(specificrfcentries).length + " RFCs relevant to " + specific.toUpperCase() + ", of which "+arr.length+" are selected by filter. Total pages selected: "+totalPages);
 }
 
-var dnsrfcs={};
+var specificrfcs={};
 var drafts={};
 
 function phaseTwo() {
-d3.json("all-dns-rfcs.json", {cache: "force-cache"}).then(function(js) {
+d3.json("data/all-" + specific + "-rfcs.json", {cache: "force-cache"}).then(function(js) {
     allrfcs = js;
     for(var a in js) {
         var rfc = js[a];
 
         // there must be a way, way better way to do this loop
-        if(rfc.docID.toLowerCase() in dnsrfcs) {
+        if(rfc.docID.toLowerCase() in specificrfcs) {
             statuses[rfc.currentStatus]=1;
             rfc.url = 'https://tools.ietf.org/html/'+rfc.docID.toLowerCase()+'.txt';
             rfc.sections="";
 
-            if("sections" in dnsrfcs[rfc.docID.toLowerCase()]) {
-                rfc.sectionsArray = dnsrfcs[rfc.docID.toLowerCase()].sections;
-                for(var b in dnsrfcs[rfc.docID.toLowerCase()].sections) {
-                    rfc.sections+= dnsrfcs[rfc.docID.toLowerCase()].sections[b]+" ";
-                    allsections[dnsrfcs[rfc.docID.toLowerCase()].sections[b]] = 1;
+            if("sections" in specificrfcs[rfc.docID.toLowerCase()]) {
+                rfc.sectionsArray = specificrfcs[rfc.docID.toLowerCase()].sections;
+                for(var b in specificrfcs[rfc.docID.toLowerCase()].sections) {
+                    rfc.sections+= specificrfcs[rfc.docID.toLowerCase()].sections[b]+" ";
+                    allsections[specificrfcs[rfc.docID.toLowerCase()].sections[b]] = 1;
                 }
             }
-            dnsrfcentries[rfc.docID] = rfc;
+            specificrfcentries[rfc.docID] = rfc;
         }
     }
     statuses["INFORMATIONAL"]=0;
@@ -150,12 +153,15 @@ d3.json("all-dns-rfcs.json", {cache: "force-cache"}).then(function(js) {
     statuses["EXPERIMENTAL"]=0;
     statuses["BEST CURRENT PRACTICE"]=0;
     statuses["UNKNOWN"]=0;
+    statuses["HISTORIC"] = 0
+    statuses["BEST_CURRENT_PRACTICE"] = 0
 
-    d3.json("drafts.json").then(function(js) {
+    d3.json(specific + "-drafts.json").then(function(js) {
         drafts=js;
         for(var a in js) {
             var o ={};
             o.docID="draft"+a;
+            o.docID = js[a].name;
             o.title = js[a].title;
             o.pages = js[a].pages;
             o.currentStatus = js[a].track;
@@ -166,7 +172,7 @@ d3.json("all-dns-rfcs.json", {cache: "force-cache"}).then(function(js) {
             o.url = 'https://tools.ietf.org/id/'+js[a].name;
             o.sections="core";
             o.sectionsArray=["core"];
-            dnsrfcentries[o.docID]=o;
+            specificrfcentries[o.docID]=o;
         }
 
         createTable();
@@ -177,7 +183,7 @@ d3.json("all-dns-rfcs.json", {cache: "force-cache"}).then(function(js) {
 
 }
 
-d3.json("dns-rfc-annotations.json", {cache: "force-cache"}).then(function(js) {
-    dnsrfcs = js;
+d3.json(specific + "-rfc-annotations.json", {cache: "force-cache"}).then(function(js) {
+    specificrfcs = js;
     phaseTwo();
 });

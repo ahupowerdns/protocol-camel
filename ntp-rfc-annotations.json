@@ -1,0 +1,18 @@
+{
+  "rfc958":  { "sections": [ "core" ] },
+  "rfc1059": { "sections": [ "core" ] },
+  "rfc1119": { "sections": [ "core" ] },
+  "rfc1165": { "sections": [ "core" ] },
+  "rfc1305": { "sections": [ "core" ] },
+  "rfc1361": { "sections": [ "core" ] },
+  "rfc1708": { "sections": [ "core" ] },
+  "rfc1769": { "sections": [ "core" ] },
+  "rfc2030": { "sections": [ "core" ] },
+  "rfc4075": { "sections": [ "core" ] },
+  "rfc4330": { "sections": [ "core" ] },
+  "rfc5905": { "sections": [ "core" ] },
+  "rfc5907": { "sections": [ "core" ] },
+  "rfc5908": { "sections": [ "core" ] },
+  "rfc7821": { "sections": [ "core" ] },
+  "rfc7822": { "sections": [ "core" ] }
+}
