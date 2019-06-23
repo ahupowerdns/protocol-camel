@@ -1,14 +1,17 @@
-# dns camel
-Goal is to get a place where we can gather DNS relevant RFCs and drafts,
-including page numbers and number of 'MUST' and 'SHOULD' statements.
+# protocol camel
+Goal is to get a place where we can gather relevant RFCs and drafts,
+including page numbers, and make graphs of them.
 
-Page is live on https://powerdns.org/dns-camel/
+A sample page is live on https://powerdns.org/dns-camel/
 
 ## How you can help
 In various ways:
 
- * The source file [dns-rfc-annotations.json] is known to not list all DNS relevant RFCs
+ * The source file [data/dns-rfc-annotations.json] is known to not list all DNS relevant RFCs
  * Check if your favorite RFCs are listed in the right categories
+
+We currently have files for BGP, DNS and NTP. Please contribute other
+protocols!
 
 ## Sources
 
@@ -18,8 +21,9 @@ In various ways:
  * https://tools.ietf.org/wg/dprive/
 
 ## Updating the graphs
-Get a fresh copy of rfc-index.xml, and update [dns-rfc-annotations.json]
-with any fresh DNS wisdom you find in there.
+Get a fresh copy of rfc-index.xml, and update the relevant rfc-annotations.json
+file with any fresh documents you find out about:
+
 ```
     curl -Ss https://www.ietf.org/rfc/rfc-index.xml > ext/rfc-index.xml 
 ```
@@ -27,13 +31,15 @@ with any fresh DNS wisdom you find in there.
 Then compile and run "./convert" (requires a modern C++ compiler).
 ```
     make convert
+    ./convert bgp
 ```
 
-Then run "python3 camelplot.py", which will require you to have installed
+Then run "python3 camelplot.py bgp", which will require you to have installed
 matplotlib, pandas. Some guidance is on
 [https://ds9a.nl/articles/posts/from-gnuplot-to-matplotlib-pandas/]
 
-## Other IETF areas
+You can replace bgp by any protocol you want, as long as you have put the
+right source files in the `data` directory.
 
 ## Notes on installed python requirements
 The following is needed by the Python code.
@@ -42,13 +48,21 @@ The following is needed by the Python code.
 ```
 
 ## Notes on installing Boost
-The "convert" program uses "boost" libraries. You do not need to compile them; just have the for including.
-Download the latest version from [Boost Downloads](https://www.boost.org/users/download/) and install similar to the following:
+The "convert" program uses "boost" libraries. You do not need to compile them; just have
+them for including.
+
+On most systems boost can be installed easily from packages (typically
+libboost-dev or boost-devel).  If you have no packages and do not want to
+compile, download the latest version from [Boost
+Downloads](https://www.boost.org/users/download/) and install similar to the
+following:
+
 ```
     mkdir ~/src ~/src/boost
     cd ~/src/boost
     shasum -a256 ~/Downloads/boost_1_70_0.tar.bz2
     tar xf ~/Downloads/boost_1_70_0.tar.bz2
 ```
-The "Makefile" has a -I flag to include this library if not installed in the system directories.
+The "Makefile" has a commented out -I flag to include this library if not installed in the system directories. 
+Remove the '#' to enable it. 
 
