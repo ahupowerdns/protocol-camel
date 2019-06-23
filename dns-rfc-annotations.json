@@ -272,5 +272,7 @@
 "rfc8509": {"sections": ["dns-use"]},
 "rfc8501": {"sections": ["dns-use"]},
 "rfc8499": {"sections": ["dns-meta"]},
-"rfc8490": {"sections": ["core"]}
+"rfc8490": {"sections": ["core"]},
+"rfc8598": {"sections": ["dns-use"]},
+"rfc8624": {"sections": ["core"]}
 }
