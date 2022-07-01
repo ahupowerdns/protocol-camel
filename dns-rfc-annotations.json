@@ -274,5 +274,12 @@
 "rfc8499": {"sections": ["dns-meta"]},
 "rfc8490": {"sections": ["core"]},
 "rfc8598": {"sections": ["dns-use"]},
-"rfc8624": {"sections": ["core"]}
+"rfc8624": {"sections": ["core"]},
+"rfc8659": {"sections": ["rrtype"]},
+"rfc8806": {"sections": ["core"]},
+"rfc8945": {"sections": ["core"]},
+"rfc9076": {"sections": ["core"]},
+"rfc9156": {"sections": ["core"]},
+"rfc9230": {"sections": ["core"]},
+"rfc9250": {"sections": ["core"]}
 }
